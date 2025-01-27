@@ -10,11 +10,17 @@ app = Flask(__name__)
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
+DOWNLOAD_DIR = os.path.join(os.path.dirname(__file__), 'downloads')
+
+if not os.path.exists(DOWNLOAD_DIR):
+    os.makedirs(DOWNLOAD_DIR)
+
 def clean_filename(title):
     try:
-        title = re.sub(r'[^\x00-\x7FáéíóúÁÉÍÓÚâêîôÂÊÎÔãõÃÕçÇ]', '', title)
-        title = re.sub(r'[<>:"/\\|?*]', '', title)
+        title = re.sub(r'[^\x00-\x7FáéíóúÁÉÍÓÚâêîôÂÊÎÔãõÃÕçÇ&]', '', title)
+        title = re.sub(r'[<>:"/\\|?*@]', '', title)
         title = title.strip()
+        title = " ".join(title.split())
         return title
     
     except Exception as e:
@@ -55,7 +61,7 @@ def download():
                 'preferredcodec': 'mp3',
                 'preferredquality': '192',
             }],
-            'outtmpl': f'{clean_title}.%(ext)s',
+            'outtmpl': os.path.join(DOWNLOAD_DIR, f'{clean_title}.%(ext)s'),
             'logger': logger,
         }
 
@@ -63,7 +69,7 @@ def download():
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.download([video_url])
 
-        output_file = f'{clean_title}.mp3'
+        output_file = os.path.join(DOWNLOAD_DIR, f'{clean_title}.mp3')
         if not os.path.exists(output_file):
             logger.error(f"Arquivo de saída não encontrado: {output_file}")
             return "Erro ao criar o arquivo de áudio.", 500
