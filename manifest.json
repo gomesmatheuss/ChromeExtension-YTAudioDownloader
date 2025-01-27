@@ -2,12 +2,17 @@
     "manifest_version": 3,
     "name": "YouTube Audio Downloader",
     "version": "1.4",
-    "permissions": ["activeTab", "downloads"],
-    "host_permissions": ["https://www.youtube.com/*"],
+    "permissions": [
+        "activeTab",
+        "downloads"
+    ],
+    "host_permissions": [
+        "https://www.youtube.com/*"
+    ],
     "action": {
-      "default_popup": "popup.html"
+        "default_popup": "popup.html"
     },
     "background": {
-      "service_worker": "background.js"
+        "service_worker": "background.js"
     }
-  }
+}
